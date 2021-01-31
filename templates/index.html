@@ -1,0 +1,34 @@
+{% extends 'base_site.html' %}
+{% load i18n %}
+{% block head %}
+    <link rel="stylesheet" href="../static/css/base.css">
+{% endblock %}
+{% block content %}
+    <div class="custom-flex-box">
+        <h2>{{ title }}</h2>
+    </div>
+    <div class="custom-flex-box">
+        <div class="card">
+            <div class="container">
+                <form action="{% url 'shorten_url' %}" method="post">
+                    {% csrf_token %}
+                    <label for="url">
+                        <b>{% trans "URL" %}:</b>
+                    </label>
+                    <input id="url" type="text" name="url"/>
+                    <input type="submit" value="Submit">
+                </form>
+            </div>
+        </div>
+        {% if short_url %}
+            <div class="card">
+                <div class="container">
+                    <label for="short_url">
+                        <b>{% trans "Short URL" %}:</b>
+                    </label>
+                    <span id="short_url">{{ short_url }}</span>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
