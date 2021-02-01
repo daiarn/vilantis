@@ -1,14 +1,9 @@
-import hashlib
-import random
-import string
-import uuid
-from datetime import datetime
-
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 
 from vilantis.models import ShortURL, Statistics
+from vilantis.utils import MD5Strategy, SHA256Strategy, RandomStrategy
 
 
 def index(request):
@@ -23,52 +18,22 @@ def _is_short_url_valid(url):
     return not ShortURL.objects.filter(short_url=url).exists()
 
 
-def _get_start_index(text):
-    if len(text) < 10:
-        return None
-    return random.choice(range(0, len(text) - 10))
-
-
-def _random_url():
-    choices = string.ascii_letters + string.digits
-    return ''.join(random.choice(choices) for _ in range(10))
-
-
-def _md5_url(url):
-    unique_id = uuid.uuid1()
-    string_to_hash = str(unique_id) + url
-    hash_object = hashlib.md5()
-    hash_object.update(string_to_hash.encode())
-    result = hash_object.hexdigest(),
-    start_index = _get_start_index(result)
-    if start_index is not None:
-        return result[start_index:start_index + 10]
-    else:
-        return None
-
-
-def _sha256(url):
-    unique_id = uuid.uuid1()
-    string_to_hash = str(unique_id) + url
-    hash_object = hashlib.sha256(string_to_hash.encode())
-    result = hash_object.hexdigest()
-    start_index = _get_start_index(result)
-    if start_index is not None:
-        return result[start_index:start_index + 10]
-    else:
-        return None
-
-
 def shorten_url(request):
     is_valid = False
     user_url = request.POST.get("url", None)
-    if user_url is None:
+    algorithm = request.POST.get("algorithm", None)
+    if user_url is None or algorithm is None:
         index(request)
+    if algorithm == "md5":
+        strategy = MD5Strategy()
+    elif algorithm == "sha256":
+        strategy = SHA256Strategy()
+    else:
+        strategy = RandomStrategy()
+
     short_url = ""
     while not is_valid:
-        # short_url = _random_url()
-        # short_url = _md5_url(user_url)
-        short_url = _sha256(user_url)
+        short_url = strategy.get_short_url(user_url)
         if short_url is None:
             is_valid = False
         else:

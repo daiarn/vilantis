@@ -8,7 +8,8 @@
 
 .card {
   margin-top: 20px;
-  height: 60px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -18,10 +19,24 @@
   transition: 0.3s;
 }
 
+.card input {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.card select {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
 .card:hover {
   box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
 }
 
 .container {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  flex-direction: column;
   padding: 2px 16px;
 }

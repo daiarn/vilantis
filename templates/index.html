@@ -8,18 +8,6 @@
         <h2>{{ title }}</h2>
     </div>
     <div class="custom-flex-box">
-        <div class="card">
-            <div class="container">
-                <form action="{% url 'shorten_url' %}" method="post">
-                    {% csrf_token %}
-                    <label for="url">
-                        <b>{% trans "URL" %}:</b>
-                    </label>
-                    <input id="url" type="text" name="url"/>
-                    <input type="submit" value="Submit">
-                </form>
-            </div>
-        </div>
         {% if short_url %}
             <div class="card">
                 <div class="container">
@@ -30,5 +18,19 @@
                 </div>
             </div>
         {% endif %}
+        <div class="card">
+            <form class="container" action="{% url 'shorten_url' %}" method="post">
+                {% csrf_token %}
+                <label for="url">{% trans "URL" %}:</label>
+                <input id="url" type="text" name="url"/>
+                <label for="algorithm">{% trans "Pick an algorithm" %}:</label>
+                <select id="algorithm" name="algorithm">
+                    <option value="ran">Random</option>
+                    <option value="md5">MD5</option>
+                    <option value="sha256">SHA 256</option>
+                </select>
+                <input type="submit" value="Submit">
+            </form>
+        </div>
     </div>
 {% endblock %}
